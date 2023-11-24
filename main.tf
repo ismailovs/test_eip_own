@@ -27,7 +27,7 @@ resource "aws_route_table" "rt" {
   vpc_id = aws_vpc.main.id
 
   route {
-    cidr_block = "10.0.1.0/24"
+    cidr_block = "0.0.0.0/0"
     gateway_id = aws_internet_gateway.gw.id
   }
 
@@ -37,7 +37,7 @@ resource "aws_route_table" "rt" {
 }
 
 resource "aws_route_table_association" "a" {
-  subnet_id      = aws_subnet.my_subnet.id
+  subnet_id      = aws_subnet.main.id
   route_table_id = aws_route_table.rt.id
 }
 
@@ -46,9 +46,9 @@ resource "aws_route_table_association" "a" {
 
 
 resource "aws_instance" "web" {
-  ami           = var.ami["us-east-1"]
+  ami           = var.ami["us-east-1a"]
   instance_type = var.instance_types[0]
-  subnet_id = aws_subnet.my_subnet.id
+  subnet_id = aws_subnet.main.id
   associate_public_ip_address = true
   key_name = "cloud_2025"
   security_groups = [  ]
@@ -76,10 +76,9 @@ resource "aws_vpc" "main" {
   }
 }
 
-resource "aws_subnet" "my_subnet" {
+resource "aws_subnet" "main" {
   vpc_id            = aws_vpc.main.id
   cidr_block        = "10.0.1.0/24"
-  availability_zone = "us-east-1"
   map_public_ip_on_launch = true # To ensure the instance gets a public IP
   tags = {
     Name = "cloud_2025_Subnet"
